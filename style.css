@@ -1,0 +1,70 @@
+#main {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+h1 {
+    font-family: 'Righteous', cursive;
+    /* font-family: 'Roboto', sans-serif; */
+    text-align: center;
+    
+}
+
+h3 {
+    text-align: center;
+}
+
+.btn {
+    padding: 20px 30px;
+    margin: 10px auto;
+    background-color: teal;
+    color: white;
+    border: none;
+    border-radius: 25px;
+}
+
+.btn:hover {
+    background-color: navy;
+    cursor: pointer;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+}
+
+.cell, .upNextCell {
+    /* border: 1px solid darkcyan; */
+    padding: 10px;
+}
+
+#grid, #upNext {
+    border: 1px solid darkcyan;
+}
+
+#upNext {
+    margin-left: 10px;
+}
+
+#grid {
+    margin-left: 100px;
+}
+
+.score-line {
+    text-align: center;
+}
+
+.teal {
+    background-color: teal;
+}
+
+.notVisible {
+    border: none;
+}
+
+#gameSpace {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
