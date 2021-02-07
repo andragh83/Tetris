@@ -2,8 +2,12 @@ const grid = document.getElementById('grid');
 const extendedGrid = document.getElementById('extendedGrid');
 const upNextGrid = document.getElementById('upNext');
 const score = document.getElementById('score');
+const gameOverH3 = document.getElementById('gameOver');
+const outcome = document.getElementById('outcome');
+let youWin = false;
 let speed = 1000;
 let currentScore = 0
+let gameOver = false;
 
 const buildGrid = (parent, x, y, cellClassName) => {
     for (let i=0; i<x; i++) {
@@ -67,13 +71,19 @@ const tetromino6 = (nbOfCells) => [
     [2, nbOfCells, nbOfCells+1, nbOfCells+2], 
 ];
 
+const tetromino7 = (nbOfCells) => [
+    [0, nbOfCells, nbOfCells+1, nbOfCells*2+1],
+    [1, 2, nbOfCells, nbOfCells+1]
+]
+
 const allTetrominos = [
     tetromino1(width),
     tetromino2(width),
     tetromino3(width),
     tetromino4(width),
     tetromino5(width),
-    tetromino6(width)
+    tetromino6(width),
+    tetromino7(width)
 ]
 
 const allUpNextTetrominos = [
@@ -82,7 +92,8 @@ const allUpNextTetrominos = [
     tetromino3(4),
     tetromino4(4),
     tetromino5(4),
-    tetromino6(4)
+    tetromino6(4),
+    tetromino7(4),
 ]
 
 const initialPosition = 4;
@@ -91,7 +102,7 @@ let currentRotation = 0;
 let randomIndex1 = Math.floor(Math.random() * allTetrominos.length);
 let randomIndex2 = Math.floor(Math.random() * allTetrominos.length);
 let current = allTetrominos[randomIndex1][currentRotation];
-let currentUpNext = allUpNextTetrominos[randomIndex2][currentRotation];
+let currentUpNext = allUpNextTetrominos[randomIndex2][0];
 let runGame = true;
 
 
@@ -137,7 +148,7 @@ const freeze = () => {
                 randomIndex2 = Math.floor(Math.random() * allTetrominos.length);
                 currentRotation=0;
                 current = allTetrominos[randomIndex1][currentRotation];
-                currentUpNext = allUpNextTetrominos[randomIndex2][currentRotation];
+                currentUpNext = allUpNextTetrominos[randomIndex2][0];
                 currentPosition = 4;
                 colorUpNextTetromino();
                 colorTetromino();
@@ -243,37 +254,59 @@ const eraseLines = () => {
             //recreating squares array
             squares = Array.from(document.querySelectorAll(".cell"));
         }
-        
-        
     }
 }
 
 const checkGameOver = () => {
-    if (currentPosition < width*2 && current.some(square => squares[currentPosition+square].classList.contains('taken'))) {
-        console.log('GameOVER!!!');
-        clearInterval(timerId); 
-        button.innerText='Play again';
-        runGame = false;
-        //ro be added for replay
-        // squares.forEach((square, i) => squares[i].classList.remove('taken'));
-        // squares.forEach((square, i) => squares[i].classList.remove('teal'));
+    if ((currentPosition < width*2 && 
+        current.some(square => squares[currentPosition+square].classList.contains('taken'))) ||
+        currentScore > 100){
+            console.log('GameOVER!!!');
+            clearInterval(timerId); 
+            button.innerText='Play again';
+            gameOverH3.innerText = 'GAME OVER';
+            gameOver = true;
+            if (currentScore > 100) {
+                youWin = true;
+                outcome.innerText = 'YOU WIN!';
+            } else {
+                outcome.innerText = 'You lose...';
+            }
     }
 }
 
-const togglePlay = () => {
-    if (runGame) {
+const buttonPlay = () => {
+    if (runGame && !gameOver) {
         colorTetromino();
         colorUpNextTetromino();
         timerId = setInterval(moveDown, speed);
         button.innerText='Pause'
         runGame = false;
-    } else {
-        console.log ('togglePlay not')
+    } else if (!runGame && !gameOver) {
         clearInterval(timerId);
         button.innerText='Start';
         runGame = true;
+    } else if (gameOver || youWin) {
+        if (youWin) {
+            youWin = false;
+        }
+        squares.forEach((square, i) => {
+            if (i<squares.length-width) {
+                squares[i].classList.remove('taken');
+                squares[i].classList.remove('teal');
+            }
+        });
+        button.innerText='Pause'
+        gameOverH3.innerText='';
+        outcome.innerText = '';
+        colorTetromino();
+        colorUpNextTetromino();
+        timerId = setInterval(moveDown, speed);
+        gameOver = false;
+        currentScore=0;
+        score.innerText = currentScore.toString();
     }
 }
 
 const button = document.getElementById('start');
-button.addEventListener('click', togglePlay);
+button.addEventListener('click', buttonPlay);
