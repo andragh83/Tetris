@@ -1,7 +1,9 @@
 const grid = document.getElementById('grid');
 const extendedGrid = document.getElementById('extendedGrid');
 const upNextGrid = document.getElementById('upNext');
+const score = document.getElementById('score');
 let speed = 1000;
+let currentScore = 0
 
 const buildGrid = (parent, x, y, cellClassName) => {
     for (let i=0; i<x; i++) {
@@ -159,15 +161,14 @@ const control = (e) => {
 document.addEventListener('keyup', control);
 
 const rotate = () => {
-        // if (current ==== tetromino5 && !isRightEdge) {
             eraseTetromino();
             currentRotation++;
             if (currentRotation === allTetrominos[randomIndex1].length) {currentRotation = 0};
             current = allTetrominos[randomIndex1][currentRotation];
-            const cannotRotate = current.some(square => (currentPosition + square) % width === width-1 )
-            if (cannotRotate) {currentRotation--};
+            if (currentPosition%10 + getTetrominoWidth(current) > width) {
+                currentPosition = currentPosition - (currentPosition%10 + getTetrominoWidth(current));
+            }
             colorTetromino(); 
-        // }           
 }
 
 const moveLeft = () => {
@@ -188,6 +189,17 @@ const moveRight = () => {
     colorTetromino()
 }
 
+const getTetrominoWidth = (tetromino) => {
+    let tetrominoWidth = 0;
+    tetromino.forEach(square => {
+        if (square % width > tetrominoWidth) {
+            tetrominoWidth = square%width;
+        }
+    })
+    return tetrominoWidth+1;
+}
+
+
 const eraseLines = () => {
     for (let i=0; i<width*2; i++) {
         let countColor = 0;
@@ -200,7 +212,8 @@ const eraseLines = () => {
         }
 
         if (countColor === 10) {
-
+            currentScore++;
+            score.innerText = currentScore.toString();
             //removing classes from identified line and storring the line in a new array
             const newLine = []
             checkedLineIndex.forEach((index) => {
@@ -236,9 +249,14 @@ const eraseLines = () => {
 }
 
 const checkGameOver = () => {
-    if (currentPosition < width*4 && current.some(square => squares[currentPosition+square].classList.contains('taken'))) {
+    if (currentPosition < width*2 && current.some(square => squares[currentPosition+square].classList.contains('taken'))) {
         console.log('GameOVER!!!');
         clearInterval(timerId); 
+        button.innerText='Play again';
+        runGame = false;
+        //ro be added for replay
+        // squares.forEach((square, i) => squares[i].classList.remove('taken'));
+        // squares.forEach((square, i) => squares[i].classList.remove('teal'));
     }
 }
 
@@ -252,7 +270,7 @@ const togglePlay = () => {
     } else {
         console.log ('togglePlay not')
         clearInterval(timerId);
-        button.innerText='Play';
+        button.innerText='Start';
         runGame = true;
     }
 }
