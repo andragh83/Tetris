@@ -20,7 +20,7 @@ buildGrid(upNextGrid, 4, 4, 'upNextCell');
 
 const upNextSquares = Array.from(document.querySelectorAll(".upNextCell"));
 
-const addTakenClass = (parent, x,y) => {
+const addRowAtEnd = (parent, x,y) => {
     for (let i=0; i<x; i++) {
         let row = document.createElement('div');
             parent.appendChild(row).className = 'row';
@@ -32,10 +32,9 @@ const addTakenClass = (parent, x,y) => {
     }
 }
 
-addTakenClass(extendedGrid, 1,10)
+addRowAtEnd(extendedGrid, 1,10);
 
-
-const squares = Array.from(document.querySelectorAll(".cell"));
+let squares = Array.from(document.querySelectorAll(".cell"));
 const width = 10;
 
 const tetromino1 = (nbOfCells) => [
@@ -59,12 +58,20 @@ const tetromino3 = (nbOfCells) => [
 const tetromino4 = (nbOfCells) => [[0, 1, nbOfCells, nbOfCells+1]];
 const tetromino5 = (nbOfCells) => [[0, nbOfCells, nbOfCells*2, nbOfCells*3], [0,1,2,3]];
 
+const tetromino6 = (nbOfCells) => [
+    [0, 1, nbOfCells+1, nbOfCells*2+1],
+    [0,1,2,nbOfCells],
+    [0,nbOfCells,nbOfCells*2,nbOfCells*2+1], 
+    [2, nbOfCells, nbOfCells+1, nbOfCells+2], 
+];
+
 const allTetrominos = [
     tetromino1(width),
     tetromino2(width),
     tetromino3(width),
     tetromino4(width),
-    tetromino5(width)
+    tetromino5(width),
+    tetromino6(width)
 ]
 
 const allUpNextTetrominos = [
@@ -72,7 +79,8 @@ const allUpNextTetrominos = [
     tetromino2(4),
     tetromino3(4),
     tetromino4(4),
-    tetromino5(4)
+    tetromino5(4),
+    tetromino6(4)
 ]
 
 const initialPosition = 4;
@@ -115,38 +123,27 @@ const moveDown = () => {
         currentPosition = currentPosition + width;
         colorTetromino();
         freeze();
+        checkGameOver();
 }
 
 const freeze = () => {
-        current.some(square => {
-           if(current.some(square => squares[currentPosition+square+width].classList.contains("taken"))) {
-            current.forEach(square => {squares[currentPosition+square].classList.add("taken")});
-            current.forEach(square => {squares[currentPosition+square].classList.add("locked")});
-            // let countColored = 0;
-            // for (let i=Math.floor(currentPosition/10)*10; i<=Math.floor(currentPosition/10)*10+9; i++) {
-            //         if (squares[i].classList.contains('locked')) {
-            //             console.log('square', i, ':', squares[i]);
-            //             countColored++;
-            //             console.log('countColored', countColored);
-            //         }
-            // }
-            // if (countColored === 10) {console.log('found line')}
-            eraseUpNextTetromino();
-            randomIndex1 = randomIndex2;
-            randomIndex2 = Math.floor(Math.random() * allTetrominos.length);
-            currentRotation=0;
-            current = allTetrominos[randomIndex1][currentRotation];
-            currentUpNext = allUpNextTetrominos[randomIndex2][currentRotation];
-            currentPosition = 4;
-            colorUpNextTetromino();
-            colorTetromino();
+            if (current.some(square => squares[currentPosition+square+width].classList.contains("taken"))) {
+                current.forEach(square => {squares[currentPosition+square].classList.add("taken")});
+                eraseLines();
+                eraseUpNextTetromino();
+                randomIndex1 = randomIndex2;
+                randomIndex2 = Math.floor(Math.random() * allTetrominos.length);
+                currentRotation=0;
+                current = allTetrominos[randomIndex1][currentRotation];
+                currentUpNext = allUpNextTetrominos[randomIndex2][currentRotation];
+                currentPosition = 4;
+                colorUpNextTetromino();
+                colorTetromino();
            } 
-            
-        })    
+             
     }
 
 const control = (e) => {
-    console.log(e.keyCode);
     switch (e.keyCode) {
         case 37 : moveLeft();
         break;
@@ -156,8 +153,6 @@ const control = (e) => {
         break;
         case 40 : moveDown();
         break;
-        default:
-            console.log(`Expecting action`);
     }
 }
 
@@ -169,7 +164,6 @@ const rotate = () => {
             currentRotation++;
             if (currentRotation === allTetrominos[randomIndex1].length) {currentRotation = 0};
             current = allTetrominos[randomIndex1][currentRotation];
-            console.log('currentPosition', currentPosition)
             const cannotRotate = current.some(square => (currentPosition + square) % width === width-1 )
             if (cannotRotate) {currentRotation--};
             colorTetromino(); 
@@ -177,7 +171,6 @@ const rotate = () => {
 }
 
 const moveLeft = () => {
-    console.log('move left')
     eraseTetromino()
     const isLeftEdge = current.some(square => (square + currentPosition) % width === 0 )
     if (!isLeftEdge) currentPosition -=1;
@@ -195,10 +188,62 @@ const moveRight = () => {
     colorTetromino()
 }
 
+const eraseLines = () => {
+    for (let i=0; i<width*2; i++) {
+        let countColor = 0;
+        let checkedLineIndex = [];
+        for (let j=0; j<width; j++) {
+            if (squares[i*width+j].classList.contains('taken')) {
+                countColor++;
+                checkedLineIndex.push(i*width+j);
+            }
+        }
+
+        if (countColor === 10) {
+
+            //removing classes from identified line and storring the line in a new array
+            const newLine = []
+            checkedLineIndex.forEach((index) => {
+                squares[index].classList.remove('taken');
+                squares[index].classList.remove('teal');
+                newLine.push(squares[index]);
+            })
+
+            //removing html elements
+            let rowToDelete = squares[checkedLineIndex[0]].parentNode;
+            while (rowToDelete.firstChild) {
+                rowToDelete.removeChild(rowToDelete.firstChild);
+            }
+
+
+            //creating new html row and adding it at the start
+            let row = document.createElement('div');
+            row.classList.add('row');
+            grid.insertBefore(row, grid.childNodes[0]);
+
+            //inserting html cells to newly created row
+            for (let i=0; i<newLine.length; i++) {
+                let cell = document.createElement('div');
+                row.appendChild(cell).className = "cell";
+            } 
+
+            //recreating squares array
+            squares = Array.from(document.querySelectorAll(".cell"));
+        }
+        
+        
+    }
+}
+
+const checkGameOver = () => {
+    if (currentPosition < width*4 && current.some(square => squares[currentPosition+square].classList.contains('taken'))) {
+        console.log('GameOVER!!!');
+        clearInterval(timerId); 
+    }
+}
+
 const togglePlay = () => {
-    console.log ('runGame', runGame)
     if (runGame) {
-        console.log ('togglePlay when game runs')
         colorTetromino();
         colorUpNextTetromino();
         timerId = setInterval(moveDown, speed);
