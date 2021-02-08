@@ -106,35 +106,99 @@ let currentUpNext = allUpNextTetrominos[randomIndex2][0];
 let runGame = true;
 
 
-const colorTetromino = () => {
+const colorTetromino = (tetrominoIndex) => {
      current.forEach(square => {
-        squares[square+currentPosition].classList.add('teal');
+        switch (tetrominoIndex) {
+            case 0 : squares[square+currentPosition].classList.add('green');
+            break;
+            case 1 : squares[square+currentPosition].classList.add('darkGreen');
+            break;
+            case 2 : squares[square+currentPosition].classList.add('teal');
+            break;
+            case 3 : squares[square+currentPosition].classList.add('lightTeal');
+            break;
+            case 4 : squares[square+currentPosition].classList.add('red');
+            break;
+            case 5 : squares[square+currentPosition].classList.add('coral');
+            break;
+            case 6 : squares[square+currentPosition].classList.add('orange');
+            break;
+            default: squares[square+currentPosition].classList.add('teal');
+        }
     })
 }
 
-const eraseTetromino = () => {
+const eraseTetromino = (tetrominoIndex) => {
     current.forEach(square => {
-        squares[square+currentPosition].classList.remove('teal');
+        switch (tetrominoIndex) {
+            case 0 : squares[square+currentPosition].classList.remove('green');
+            break;
+            case 1 : squares[square+currentPosition].classList.remove('darkGreen');
+            break;
+            case 2 : squares[square+currentPosition].classList.remove('teal');
+            break;
+            case 3 : squares[square+currentPosition].classList.remove('lightTeal');
+            break;
+            case 4 : squares[square+currentPosition].classList.remove('red');
+            break;
+            case 5 : squares[square+currentPosition].classList.remove('coral');
+            break;
+            case 6 : squares[square+currentPosition].classList.remove('orange');
+            break;
+            default: squares[square+currentPosition].classList.remove('teal');
+        }
     })
 }
 
-const colorUpNextTetromino = () => {
+const colorUpNextTetromino = (tetrominoIndex) => {
     currentUpNext.forEach(square => {
-        upNextSquares[square+1].classList.add('teal');
+        switch (tetrominoIndex) {
+            case 0 : upNextSquares[square+1].classList.add('green');
+            break;
+            case 1 : upNextSquares[square+1].classList.add('darkGreen');
+            break;
+            case 2 : upNextSquares[square+1].classList.add('teal');
+            break;
+            case 3 : upNextSquares[square+1].classList.add('lightTeal');
+            break;
+            case 4 : upNextSquares[square+1].classList.add('red');
+            break;
+            case 5 : upNextSquares[square+1].classList.add('coral');
+            break;
+            case 6 : upNextSquares[square+1].classList.add('orange');
+            break;
+            default: upNextSquares[square+1].classList.add('teal');
+        }
    })
 }
 
-const eraseUpNextTetromino = () => {
+const eraseUpNextTetromino = (tetrominoIndex) => {
     currentUpNext.forEach(square => {
-        upNextSquares[square+1].classList.remove('teal');
+        switch (tetrominoIndex) {
+            case 0 : upNextSquares[square+1].classList.remove('green');
+            break;
+            case 1 : upNextSquares[square+1].classList.remove('darkGreen');
+            break;
+            case 2 : upNextSquares[square+1].classList.remove('teal');
+            break;
+            case 3 : upNextSquares[square+1].classList.remove('lightTeal');
+            break;
+            case 4 : upNextSquares[square+1].classList.remove('red');
+            break;
+            case 5 : upNextSquares[square+1].classList.remove('coral');
+            break;
+            case 6 : upNextSquares[square+1].classList.remove('orange');
+            break;
+            default: upNextSquares[square+1].classList.remove('teal');
+        }
    })
 }
 
 
 const moveDown = () => {
-        eraseTetromino();
+        eraseTetromino(randomIndex1);
         currentPosition = currentPosition + width;
-        colorTetromino();
+        colorTetromino(randomIndex1);
         freeze();
         checkGameOver();
 }
@@ -143,15 +207,15 @@ const freeze = () => {
             if (current.some(square => squares[currentPosition+square+width].classList.contains("taken"))) {
                 current.forEach(square => {squares[currentPosition+square].classList.add("taken")});
                 eraseLines();
-                eraseUpNextTetromino();
+                eraseUpNextTetromino(randomIndex2);
                 randomIndex1 = randomIndex2;
                 randomIndex2 = Math.floor(Math.random() * allTetrominos.length);
                 currentRotation=0;
                 current = allTetrominos[randomIndex1][currentRotation];
                 currentUpNext = allUpNextTetrominos[randomIndex2][0];
                 currentPosition = 4;
-                colorUpNextTetromino();
-                colorTetromino();
+                colorUpNextTetromino(randomIndex2);
+                colorTetromino(randomIndex1);
            } 
              
     }
@@ -167,37 +231,35 @@ const control = (e) => {
         case 40 : moveDown();
         break;
     }
-}
-
-document.addEventListener('keyup', control);
+};
 
 const rotate = () => {
-            eraseTetromino();
+            eraseTetromino(randomIndex1);
             currentRotation++;
             if (currentRotation === allTetrominos[randomIndex1].length) {currentRotation = 0};
             current = allTetrominos[randomIndex1][currentRotation];
             if (currentPosition%10 + getTetrominoWidth(current) > width) {
                 currentPosition = currentPosition - (currentPosition%10 + getTetrominoWidth(current));
             }
-            colorTetromino(); 
+            colorTetromino(randomIndex1); 
 }
 
 const moveLeft = () => {
-    eraseTetromino()
+    eraseTetromino(randomIndex1)
     const isLeftEdge = current.some(square => (square + currentPosition) % width === 0 )
     if (!isLeftEdge) currentPosition -=1;
     if (current.some(square => squares[square + currentPosition].classList.contains('taken'))) {
         currentPosition++;}
-    colorTetromino()
+    colorTetromino(randomIndex1)
 }
     
 const moveRight = () => {
-    eraseTetromino()
-    const isRightEdge = current.some(square => (currentPosition + square) % width === width-1 )
+    eraseTetromino(randomIndex1)
+    const isRightEdge = current.some(square => (square + currentPosition) % width === width-1 )
     if (!isRightEdge) currentPosition +=1;
     if (current.some(square => squares[square + currentPosition].classList.contains('taken'))) {
         currentPosition--;}
-    colorTetromino()
+    colorTetromino(randomIndex1)
 }
 
 const getTetrominoWidth = (tetromino) => {
@@ -229,7 +291,7 @@ const eraseLines = () => {
             const newLine = []
             checkedLineIndex.forEach((index) => {
                 squares[index].classList.remove('taken');
-                squares[index].classList.remove('teal');
+                // squares[index].classList.remove('teal');
                 newLine.push(squares[index]);
             })
 
@@ -261,6 +323,7 @@ const checkGameOver = () => {
     if ((currentPosition < width*2 && 
         current.some(square => squares[currentPosition+square].classList.contains('taken'))) ||
         currentScore > 100){
+            document.removeEventListener('keydown', control);
             console.log('GameOVER!!!');
             clearInterval(timerId); 
             button.innerText='Play again';
@@ -276,9 +339,10 @@ const checkGameOver = () => {
 }
 
 const buttonPlay = () => {
+    document.addEventListener('keydown', control);
     if (runGame && !gameOver) {
-        colorTetromino();
-        colorUpNextTetromino();
+        colorTetromino(randomIndex1);
+        colorUpNextTetromino(randomIndex2);
         timerId = setInterval(moveDown, speed);
         button.innerText='Pause'
         runGame = false;
@@ -293,14 +357,23 @@ const buttonPlay = () => {
         squares.forEach((square, i) => {
             if (i<squares.length-width) {
                 squares[i].classList.remove('taken');
+                squares[i].classList.remove('green');
+                squares[i].classList.remove('darkGreen');
                 squares[i].classList.remove('teal');
+                squares[i].classList.remove('lightTeal');
+                squares[i].classList.remove('red');
+                squares[i].classList.remove('coral');
+                squares[i].classList.remove('orange');
+                squares[i].classList.remove('teal');
+            
+                // squares[i].classList.remove('teal');
             }
         });
         button.innerText='Pause'
         gameOverH3.innerText='';
         outcome.innerText = '';
-        colorTetromino();
-        colorUpNextTetromino();
+        colorTetromino(randomIndex1);
+        colorUpNextTetromino(randomIndex2);
         timerId = setInterval(moveDown, speed);
         gameOver = false;
         currentScore=0;

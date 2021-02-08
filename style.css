@@ -27,10 +27,11 @@ h3 {
     color: white;
     border: none;
     border-radius: 25px;
+    outline: none;
 }
 
 .btn:hover {
-    background-color: navy;
+    background-color: #16594A;
     cursor: pointer;
 }
 
@@ -61,9 +62,37 @@ h3 {
     margin: 10px auto;
 }
 
-.teal {
-    background-color: teal;
+/* tetrominos' colors */
+
+.green {
+    background-color: #16594A;
 }
+
+.darkGreen {
+    background-color: rgb(14, 58, 49);
+}
+
+.teal {
+    background-color: #12908E;
+}
+
+.lightTeal {
+    background-color: #97CECC;
+}
+
+.red {
+    background-color: #C4421A;
+}
+
+.coral {
+    background-color: rgb(249, 117, 69);
+}
+
+.orange {
+    background-color: #F98F45;
+}
+
+/* end of tetrominos colors */
 
 .notVisible {
     border: none;
