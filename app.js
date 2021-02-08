@@ -9,6 +9,8 @@ let speed = 1000;
 let currentScore = 0
 let gameOver = false;
 
+// creating grid
+
 const buildGrid = (parent, x, y, cellClassName) => {
     for (let i=0; i<x; i++) {
         let row = document.createElement('div');
@@ -21,10 +23,11 @@ const buildGrid = (parent, x, y, cellClassName) => {
     }
 } 
 
-buildGrid(grid, 20,10, 'cell');
-buildGrid(upNextGrid, 4, 4, 'upNextCell');
+buildGrid(grid, 20,10, 'cell'); // main grid
+buildGrid(upNextGrid, 4, 4, 'upNextCell'); //small grid for up next
 
-const upNextSquares = Array.from(document.querySelectorAll(".upNextCell"));
+
+// adding a row at the bottom to check if tetrominos reached bottom
 
 const addRowAtEnd = (parent, x,y) => {
     for (let i=0; i<x; i++) {
@@ -40,9 +43,13 @@ const addRowAtEnd = (parent, x,y) => {
 
 addRowAtEnd(extendedGrid, 1,10);
 
+// creating squares array storing each cell of the grid
 let squares = Array.from(document.querySelectorAll(".cell"));
-const width = 10;
+//creating the array for the upNext tetroimino
+const upNextSquares = Array.from(document.querySelectorAll(".upNextCell"));
 
+
+//creating tetromino paterns
 const tetromino1 = (nbOfCells) => [
     [nbOfCells*2, nbOfCells,0,1], 
     [0,1,2,nbOfCells+2],
@@ -76,6 +83,15 @@ const tetromino7 = (nbOfCells) => [
     [1, 2, nbOfCells, nbOfCells+1]
 ]
 
+// grid width
+const width = 10;
+// starting points pn the grid and first display of the first tetromino
+const initialPosition = 4;
+let currentPosition = 4;
+let currentRotation = 0;
+
+// generating tetrominoes
+
 const allTetrominos = [
     tetromino1(width),
     tetromino2(width),
@@ -96,15 +112,13 @@ const allUpNextTetrominos = [
     tetromino7(4),
 ]
 
-const initialPosition = 4;
-let currentPosition = 4;
-let currentRotation = 0;
+//generating current tetromino and nextUp tetromino
+
 let randomIndex1 = Math.floor(Math.random() * allTetrominos.length);
 let randomIndex2 = Math.floor(Math.random() * allTetrominos.length);
 let current = allTetrominos[randomIndex1][currentRotation];
 let currentUpNext = allUpNextTetrominos[randomIndex2][0];
 let runGame = true;
-
 
 const colorTetromino = (tetrominoIndex) => {
      current.forEach(square => {
@@ -220,8 +234,9 @@ const freeze = () => {
              
     }
 
-const control = (e) => {
-    switch (e.keyCode) {
+// keyboard control function
+const control = (event) => {
+    switch (event.keyCode) {
         case 37 : moveLeft();
         break;
         case 38 : rotate();
@@ -232,6 +247,36 @@ const control = (e) => {
         break;
     }
 };
+
+// mobile screen control functions
+
+let x = null;
+let y = null;
+
+const getTouchCoordinates = (event) => {
+    x = event.touches[0].clientX;
+    y = event.touches[0].clientY;
+}
+
+const mobileControl = (event) => {
+    let difX = event.changedTouches[0].clientX - x;
+    let difY = event.changedTouches[0].clientY - y;
+    if ( Math.abs( difX ) > Math.abs( difY ) ) {
+        if (difX > 0) {
+            moveRight();
+        } else {
+            moveLeft();
+        } 
+    } else {
+        if (difY > 0) {
+            moveDown();
+        } else {
+            rotate();
+        }
+    }
+    x = null;
+    y = null;
+}
 
 const rotate = () => {
             eraseTetromino(randomIndex1);
@@ -340,6 +385,8 @@ const checkGameOver = () => {
 
 const buttonPlay = () => {
     document.addEventListener('keydown', control);
+    document.addEventListener('touchstart', getTouchCoordinates, false);
+    document.addEventListener('touchend', mobileControl, false);
     if (runGame && !gameOver) {
         colorTetromino(randomIndex1);
         colorUpNextTetromino(randomIndex2);
@@ -350,10 +397,13 @@ const buttonPlay = () => {
         clearInterval(timerId);
         button.innerText='Start';
         runGame = true;
-    } else if (gameOver || youWin) {
+
+    } else if (gameOver) {
         if (youWin) {
             youWin = false;
         }
+
+        //cleaning up the grid
         squares.forEach((square, i) => {
             if (i<squares.length-width) {
                 squares[i].classList.remove('taken');
