@@ -46,9 +46,14 @@ h3 {
 }
 
 .cell, .upNextCell {
-    /* border: 1px solid darkcyan; */
     padding: 10px;
 }
+
+@media only screen and (max-width: 600px) {
+    .cell {
+        padding: 30px;
+    }
+  }
 
 #grid, #upNext {
     border: 1px solid darkcyan;
