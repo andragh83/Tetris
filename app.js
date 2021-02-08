@@ -27,6 +27,7 @@ buildGrid(grid, 20,10, 'cell'); // main grid
 buildGrid(upNextGrid, 4, 4, 'upNextCell'); //small grid for up next
 
 
+
 // adding a row at the bottom to check if tetrominos reached bottom
 
 const addRowAtEnd = (parent, x,y) => {
