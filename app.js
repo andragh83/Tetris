@@ -207,7 +207,7 @@ const eraseUpNextTetromino = (tetrominoIndex) => {
    })
 }
 
-
+// default direction of movement
 const moveDown = () => {
         eraseTetromino(randomIndex1);
         currentPosition = currentPosition + width;
@@ -215,6 +215,8 @@ const moveDown = () => {
         freeze();
         checkGameOver();
 }
+
+//checking if bottom or near an elememnt
 
 const freeze = () => {
             if (current.some(square => squares[currentPosition+square+width].classList.contains("taken"))) {
@@ -247,7 +249,7 @@ const control = (event) => {
     }
 };
 
-// mobile screen control functions
+// mobile screen touch control functions
 
 let x = null;
 let y = null;
@@ -276,6 +278,8 @@ const mobileControl = (event) => {
     x = null;
     y = null;
 }
+
+//tetromino movement functions
 
 const rotate = () => {
             eraseTetromino(randomIndex1);
@@ -326,7 +330,6 @@ const removingClass = (line, className) => {
 
 const removingClassAndHtmlElements = (line) => {
     removingClass(line, 'taken')
-
     let rowToDelete = squares[line[0]].parentNode;
             while (rowToDelete.firstChild) {
                 rowToDelete.removeChild(rowToDelete.firstChild);
@@ -365,44 +368,19 @@ const eraseLines = () => {
         }
 
         if (countColor === 10) {
+
+            //updating score
             currentScore++;
             score.innerText = currentScore.toString();
 
-            // //removing classes from identified line and storring the line in a new array
-            // const newLine = []
-            // checkedLineIndex.forEach((index) => {
-            //     squares[index].classList.remove('taken');
-            //     // squares[index].classList.remove('teal');
-            //     newLine.push(squares[index]);
-            // })
-
-            // //removing html elements
-            // let rowToDelete = squares[checkedLineIndex[0]].parentNode;
-            // while (rowToDelete.firstChild) {
-            //     rowToDelete.removeChild(rowToDelete.firstChild);
-            // }
-
-
-            // //creating new html row and adding it at the start
-            // let row = document.createElement('div');
-            // row.classList.add('row');
-            // grid.insertBefore(row, grid.childNodes[0]);
-
-            // //inserting html cells to newly created row
-            // for (let i=0; i<width; i++) {
-            //     let cell = document.createElement('div');
-            //     row.appendChild(cell).className = "cell";
-            // }
-
+            //removing filled lines
             removingClassAndHtmlElements(checkedLineIndex, 'taken');
-            addingClass(checkedLineIndex, 'teal');
-            setTimeout(removingClass(checkedLineIndex, 'teal'), 500);
-            setTimeout(addingClass(checkedLineIndex, 'teal'), 500);
-            setTimeout(removingClass(checkedLineIndex, 'teal'), 500);
+
+            //adding empty lines at the start of the grid
             newLineInsertedAtStart();
 
             //recreating squares array
-            squares = Array.from(document.querySelectorAll(".cell"));
+            squares = Array.from(document.querySelectorAll(".cell"))
         }
     }
 }
@@ -412,7 +390,6 @@ const checkGameOver = () => {
         current.some(square => squares[currentPosition+square].classList.contains('taken'))) ||
         currentScore > 100){
             document.removeEventListener('keydown', control);
-            console.log('GameOVER!!!');
             clearInterval(timerId); 
             button.innerText='Play again';
             gameOverH3.innerText = 'GAME OVER';

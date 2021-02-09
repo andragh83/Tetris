@@ -117,7 +117,7 @@ h3 {
     margin: 10px auto;
 }
 
-@media all and (max-width: 768px){
+@media all and (min-height: 768px){
 
     .btn {
         padding: 20px 55px;
@@ -132,10 +132,6 @@ h3 {
     h1 {
         font-size: 4rem;
         margin-top: 50px;
-    }
-
-    #upNext, #upNextTitle {
-        margin-left: 30px;
     }
 
 
