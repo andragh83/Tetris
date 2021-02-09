@@ -4,6 +4,7 @@ const upNextGrid = document.getElementById('upNext');
 const score = document.getElementById('score');
 const gameOverH3 = document.getElementById('gameOver');
 const outcome = document.getElementById('outcome');
+const mQuery = window.matchMedia('(max-width: 768px)');
 let youWin = false;
 let speed = 1000;
 let currentScore = 0
@@ -26,14 +27,10 @@ const buildGrid = (parent, x, y, cellClassName) => {
 buildGrid(grid, 20,10, 'cell'); // main grid
 buildGrid(upNextGrid, 4, 4, 'upNextCell'); //small grid for up next
 
-const mQuery = window.matchMedia('(min-width: 768px)');
 if (mQuery.matches) { 
-    // Print a message to the console 
-    console.log('Media query matched!')
+    console.log('media query active')
     let mobileCell = document.querySelectorAll('.cell');
-    console.log('all cells: ', mobileCell);
     mobileCell.forEach(cell => cell.classList.add('mobileCell'));
-    console.log('all cells: ', mobileCell);
 }
 
 // adding a row at the bottom to check if tetrominos reached bottom
@@ -326,6 +323,47 @@ const getTetrominoWidth = (tetromino) => {
     return tetrominoWidth+1;
 }
 
+// erasing filled lines
+
+const removingClass = (line, className) => {
+    line.forEach((index) => {
+        squares[index].classList.remove(className);
+    })
+}
+
+const removingClassAndHtmlElements = (line) => {
+    removingClass(line, 'taken')
+
+    let rowToDelete = squares[line[0]].parentNode;
+            while (rowToDelete.firstChild) {
+                rowToDelete.removeChild(rowToDelete.firstChild);
+            }
+}
+
+const newLineInsertedAtStart = () => {
+    //creating new html row and adding it at the start
+    let row = document.createElement('div');
+    row.classList.add('row');
+    grid.insertBefore(row, grid.childNodes[0]);
+
+    //inserting html cells to newly created row
+    for (let i=0; i<width; i++) {
+        let cell = document.createElement('div');
+        row.appendChild(cell).className = "cell";
+    }
+    
+    if (mQuery.matches) { 
+        let addedMobileCell = document.querySelectorAll('.cell');
+        addedMobileCell.forEach(cell => cell.classList.add('mobileCell'));
+    }
+}
+
+const addingClass = (line, className) => {
+    line.forEach((index) => {
+        squares[index].classList.add(className);
+    })
+}
+
 
 const eraseLines = () => {
     for (let i=0; i<width*2; i++) {
@@ -341,37 +379,44 @@ const eraseLines = () => {
         if (countColor === 10) {
             currentScore++;
             score.innerText = currentScore.toString();
-            //removing classes from identified line and storring the line in a new array
-            const newLine = []
-            checkedLineIndex.forEach((index) => {
-                squares[index].classList.remove('taken');
-                // squares[index].classList.remove('teal');
-                newLine.push(squares[index]);
-            })
 
-            //removing html elements
-            let rowToDelete = squares[checkedLineIndex[0]].parentNode;
-            while (rowToDelete.firstChild) {
-                rowToDelete.removeChild(rowToDelete.firstChild);
-            }
+            // //removing classes from identified line and storring the line in a new array
+            // const newLine = []
+            // checkedLineIndex.forEach((index) => {
+            //     squares[index].classList.remove('taken');
+            //     // squares[index].classList.remove('teal');
+            //     newLine.push(squares[index]);
+            // })
+
+            // //removing html elements
+            // let rowToDelete = squares[checkedLineIndex[0]].parentNode;
+            // while (rowToDelete.firstChild) {
+            //     rowToDelete.removeChild(rowToDelete.firstChild);
+            // }
 
 
-            //creating new html row and adding it at the start
-            let row = document.createElement('div');
-            row.classList.add('row');
-            grid.insertBefore(row, grid.childNodes[0]);
+            // //creating new html row and adding it at the start
+            // let row = document.createElement('div');
+            // row.classList.add('row');
+            // grid.insertBefore(row, grid.childNodes[0]);
 
-            //inserting html cells to newly created row
-            for (let i=0; i<newLine.length; i++) {
-                let cell = document.createElement('div');
-                row.appendChild(cell).className = "cell";
-            }
+            // //inserting html cells to newly created row
+            // for (let i=0; i<width; i++) {
+            //     let cell = document.createElement('div');
+            //     row.appendChild(cell).className = "cell";
+            // }
             
-            if (mQuery.matches) { 
-                // Print a message to the console 
-                let addedMobileCell = document.querySelectorAll('.cell');
-                addedMobileCell.forEach(cell => cell.classList.add('mobileCell'));
-            }
+            // if (mQuery.matches) { 
+            //     let addedMobileCell = document.querySelectorAll('.cell');
+            //     addedMobileCell.forEach(cell => cell.classList.add('mobileCell'));
+            // }
+
+            removingClassAndHtmlElements(checkedLineIndex, 'taken');
+            addingClass(checkedLineIndex, 'teal');
+            setTimeout(removingClass(checkedLineIndex, 'teal'), 500);
+            setTimeout(addingClass(checkedLineIndex, 'teal'), 500);
+            setTimeout(removingClass(checkedLineIndex, 'teal'), 500);
+            newLineInsertedAtStart();
 
             //recreating squares array
             squares = Array.from(document.querySelectorAll(".cell"));

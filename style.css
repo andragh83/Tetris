@@ -116,7 +116,7 @@ h3 {
     margin: 10px auto;
 }
 
-@media screen and (min-width: 768px){
+@media screen and (max-width: 768px){
     .btn {
         padding: 20px 55px;
         font-size: 2rem; 
