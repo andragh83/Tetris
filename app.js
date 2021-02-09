@@ -4,7 +4,6 @@ const upNextGrid = document.getElementById('upNext');
 const score = document.getElementById('score');
 const gameOverH3 = document.getElementById('gameOver');
 const outcome = document.getElementById('outcome');
-const mQuery = window.matchMedia('(max-width: 768px)');
 let youWin = false;
 let speed = 1000;
 let currentScore = 0
@@ -26,12 +25,6 @@ const buildGrid = (parent, x, y, cellClassName) => {
 
 buildGrid(grid, 20,10, 'cell'); // main grid
 buildGrid(upNextGrid, 4, 4, 'upNextCell'); //small grid for up next
-
-if (mQuery.matches) { 
-    console.log('media query active')
-    let mobileCell = document.querySelectorAll('.cell');
-    mobileCell.forEach(cell => cell.classList.add('mobileCell'));
-}
 
 // adding a row at the bottom to check if tetrominos reached bottom
 
@@ -351,11 +344,6 @@ const newLineInsertedAtStart = () => {
         let cell = document.createElement('div');
         row.appendChild(cell).className = "cell";
     }
-    
-    if (mQuery.matches) { 
-        let addedMobileCell = document.querySelectorAll('.cell');
-        addedMobileCell.forEach(cell => cell.classList.add('mobileCell'));
-    }
 }
 
 const addingClass = (line, className) => {
@@ -404,11 +392,6 @@ const eraseLines = () => {
             // for (let i=0; i<width; i++) {
             //     let cell = document.createElement('div');
             //     row.appendChild(cell).className = "cell";
-            // }
-            
-            // if (mQuery.matches) { 
-            //     let addedMobileCell = document.querySelectorAll('.cell');
-            //     addedMobileCell.forEach(cell => cell.classList.add('mobileCell'));
             // }
 
             removingClassAndHtmlElements(checkedLineIndex, 'taken');
