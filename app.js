@@ -26,7 +26,15 @@ const buildGrid = (parent, x, y, cellClassName) => {
 buildGrid(grid, 20,10, 'cell'); // main grid
 buildGrid(upNextGrid, 4, 4, 'upNextCell'); //small grid for up next
 
-
+const mQuery = window.matchMedia('(min-width: 768px)');
+if (mQuery.matches) { 
+    // Print a message to the console 
+    console.log('Media query matched!')
+    let mobileCell = document.querySelectorAll('.cell');
+    console.log('all cells: ', mobileCell);
+    mobileCell.forEach(cell => cell.classList.add('mobileCell'));
+    console.log('all cells: ', mobileCell);
+}
 
 // adding a row at the bottom to check if tetrominos reached bottom
 
@@ -357,7 +365,13 @@ const eraseLines = () => {
             for (let i=0; i<newLine.length; i++) {
                 let cell = document.createElement('div');
                 row.appendChild(cell).className = "cell";
-            } 
+            }
+            
+            if (mQuery.matches) { 
+                // Print a message to the console 
+                let addedMobileCell = document.querySelectorAll('.cell');
+                addedMobileCell.forEach(cell => cell.classList.add('mobileCell'));
+            }
 
             //recreating squares array
             squares = Array.from(document.querySelectorAll(".cell"));

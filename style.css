@@ -46,14 +46,12 @@ h3 {
 }
 
 .cell, .upNextCell {
-    padding: 30px;
+    padding: 10px;
 }
 
-@media screen and (min-width: 768px){
-    .cell, .upNextCell {
-        padding: 10px; 
+.mobileCell {
+        padding: 30px; 
     }
-  }
 
 #grid, #upNext {
     border: 1px solid darkcyan;
@@ -117,3 +115,26 @@ h3 {
 #outcome {
     margin: 10px auto;
 }
+
+@media screen and (min-width: 768px){
+    .btn {
+        padding: 20px 55px;
+        font-size: 2rem; 
+        border-radius: 35px;
+    }
+
+    h3, p {
+        font-size: 2rem;
+    }
+
+    h1 {
+        font-size: 4rem;
+        margin-top: 50px;
+    }
+
+    #upNext, #upNextTitle {
+        margin-left: 30px;
+    }
+
+
+  }
