@@ -113,29 +113,11 @@ h3 {
     align-items: flex-start;
 }
 
-.extendedGameSection {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.leftSection {
-    display: none;
-}
-
-.rightSection {
-    display: none;
-}
-
 #outcome {
     margin: 10px auto;
 }
 
 @media all and (min-height: 768px){
-
-    .cell {
-        padding: 1.3vh;
-    }
 
     .btn {
         padding: 20px 55px;
@@ -152,29 +134,5 @@ h3 {
         margin-top: 50px;
     }
 
-    #upNextTitle {
-        font-size: 1.5rem;
-        margin-top: 2vh;
-    }
-
-    #upNext {
-        border: none;
-        margin-top: 2vh;
-    }
-
-    .leftSection {
-        margin-right: -5vh;
-        margin-left: 3vh;
-        display: inline-block;
-    }
-    
-    .rightSection {
-        margin-left: -10vh;
-        display: inline-block;
-    }
-
-    #left, #right {
-        margin-bottom: 5vh;
-    }
 
   }
