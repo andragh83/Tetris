@@ -286,9 +286,19 @@ const rotate = () => {
             currentRotation++;
             if (currentRotation === allTetrominos[randomIndex1].length) {currentRotation = 0};
             current = allTetrominos[randomIndex1][currentRotation];
-            if (currentPosition%10 + getTetrominoWidth(current) > width) {
-                currentPosition = currentPosition - (currentPosition%10 + getTetrominoWidth(current));
+            if (current.some(square => squares[currentPosition+square].classList.contains("taken"))) {
+                if (currentRotation === 0) {
+                    currentRotation = allTetrominos[randomIndex1].length-1
+                } else {
+                    currentRotation--;
+                }
+                current = allTetrominos[randomIndex1][currentRotation]; 
             }
+            if (currentPosition%10 + getTetrominoWidth(current) > width && 
+                !current.some(square => squares[currentPosition+square].classList.contains("taken"))) 
+                {
+                    currentPosition = currentPosition - (currentPosition%10 + getTetrominoWidth(current));
+                }
             colorTetromino(randomIndex1); 
 }
 
@@ -405,8 +415,8 @@ const checkGameOver = () => {
 
 const buttonPlay = () => {
     document.addEventListener('keydown', control);
-    document.addEventListener('touchstart', getTouchCoordinates, false);
-    document.addEventListener('touchend', mobileControl, false);
+    // document.addEventListener('touchstart', getTouchCoordinates, false);
+    // document.addEventListener('touchend', mobileControl, false);
     if (runGame && !gameOver) {
         colorTetromino(randomIndex1);
         colorUpNextTetromino(randomIndex2);
@@ -453,3 +463,15 @@ const buttonPlay = () => {
 
 const button = document.getElementById('start');
 button.addEventListener('click', buttonPlay);
+
+const leftButton = document.getElementById('left');
+leftButton.addEventListener('click', moveLeft);
+
+const rightButton = document.getElementById('right');
+rightButton.addEventListener('click', moveRight);
+
+const turnButton = document.getElementById('turn');
+turnButton.addEventListener('click', rotate);
+
+const downButton = document.getElementById('down');
+downButton.addEventListener('keyDown', moveDown);
